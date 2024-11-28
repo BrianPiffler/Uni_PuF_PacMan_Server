@@ -1,22 +1,26 @@
-package com.pacman.game.server;
+package com.pacman.game;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
 /**
  * REST-Controller für Benutzeroperationen definieren
- * Bietet Endpunkte für die Registrierung, Anmeldung und das Abrufen von Benutzerdaten.
+ * Bietet Endpunkte für die Registrierung und das Abrufen von Benutzerdaten.
  */
 @RestController
 @RequestMapping("/api/user") //Basis-URL für Endpunkte definieren
 public class UserController {
 
-    // Dependency Injection, Service-Schicht für die Geschäftslogik.
     @Autowired
-    private UserService userService;
+    // Repository für Datenbankoperationen
+    private UserRepository userRepository; 
+    @Autowired
+     // Encoder für Passwörter
+    private PasswordEncoder passwordEncoder;
     
     /**
      * Endpunkt zur Registrierung eines neuen Benutzers.
@@ -27,27 +31,15 @@ public class UserController {
      */
     @PostMapping("/register")
     public ResponseEntity<String> registerUser(@RequestBody User user) {
-        if (userService.registerUser(user)) {
-            return ResponseEntity.ok("User registered successfully!");
-        } else {
+        // Überprüfen, ob der Username bereits existiert
+        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
             return ResponseEntity.badRequest().body("Registration failed. Username may already exist.");
         }
-    }
-
-    /**
-     * Endpunkt zur Useranmeldung.
-     *
-     * @param username Username
-     * @param password Passwort
-     * @return Erfolgsmeldung oder Fehlermeldung.
-     */
-    @PostMapping("/login")
-    public ResponseEntity<String> loginUser(@RequestParam String username, @RequestParam String password) {
-        if (userService.validateUser(username, password)) {
-            return ResponseEntity.ok("Login successful!");
-        } else {
-            return ResponseEntity.badRequest().body("Invalid username or password.");
-        }
+        // User in der Datenbank speichern
+        // Passwort verschlüsseln
+        user.setPassword(passwordEncoder.encode(user.getPassword())); 
+        userRepository.save(user);
+        return ResponseEntity.ok("User registered successfully!");
     }
 
    /**
@@ -59,7 +51,7 @@ public class UserController {
      */
     @GetMapping("/{username}")
     public ResponseEntity<User> getUserByUsername(@PathVariable String username) {
-        Optional<User> user = userService.getUserByUsername(username);
+        Optional<User> user = userRepository.findByUsername(username);
         if (user.isPresent()) {
             return ResponseEntity.ok(user.get());
         } else {
@@ -76,9 +68,19 @@ public class UserController {
      */
     @PatchMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable int id, @RequestBody User updatedUser) {
-        Optional<User> user = userService.updateUser(id, updatedUser);
+        Optional<User> user = userRepository.findById(id);
         if (user.isPresent()) {
-            return ResponseEntity.ok(user.get());
+            User existingUser = user.get();
+            // Zulässige Felder aktualisieren
+            existingUser.setUsername(updatedUser.getUsername());
+            // Passwort verschlüsseln
+            existingUser.setGameScore(updatedUser.getGameScore());
+            existingUser.setPassword(passwordEncoder.encode(updatedUser.getPassword())); 
+            existingUser.setLevelReached(updatedUser.getLevelReached());
+            existingUser.setDatePlayed(updatedUser.getDatePlayed());
+            existingUser.setTimePlayed(updatedUser.getTimePlayed());
+            userRepository.save(existingUser);
+            return ResponseEntity.ok(existingUser);
         } else {
             return ResponseEntity.notFound().build();
         }

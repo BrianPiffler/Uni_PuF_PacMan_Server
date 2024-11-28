@@ -1,0 +1,62 @@
+package com.pacman.game;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Optional;
+
+/**
+ * REST-Controller für die Verwaltung der Benutzerhistorie.
+ */
+@RestController
+@RequestMapping("/api/history")
+public class HistoryController {
+
+    @Autowired
+    private UserRepository userRepository;
+
+    /**
+     * POST /api/history
+     * Endpunkt zum Hinzufügen oder Aktualisieren der Spielhistorie eines Benutzers.
+     *
+     * @param user Die Benutzerhistorie-Daten im JSON-Format.
+     * @return Erfolgsmeldung oder Fehlermeldung.
+     */
+    @PostMapping
+    public ResponseEntity<String> addOrUpdateHistory(@RequestBody User user) {
+        // Überprüfen, ob der Benutzer existiert
+        Optional<User> existingUser = userRepository.findById(user.getId());
+        if (existingUser.isPresent()) {
+            // Update der Spielhistorie des Benutzers
+            User updatedUser = existingUser.get();
+            updatedUser.setGameScore(user.getGameScore());
+            updatedUser.setLevelReached(user.getLevelReached());
+            updatedUser.setDatePlayed(user.getDatePlayed());
+            updatedUser.setTimePlayed(user.getTimePlayed());
+
+            userRepository.save(updatedUser);
+            return ResponseEntity.ok("Spielhistorie erfolgreich aktualisiert!");
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    /**
+     * GET /api/history/{id}
+     * Endpunkt zum Abrufen der Spielhistorie eines Benutzers anhand der ID.
+     *
+     * @param id Die ID des Benutzers.
+     * @return Spielhistorie-Daten oder Fehlermeldung.
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getHistoryById(@PathVariable int id) {
+        // Abfrage des Benutzers anhand der ID
+        Optional<User> user = userRepository.findById(id);
+        if (user.isPresent()) {
+            return ResponseEntity.ok(user.get());
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+}

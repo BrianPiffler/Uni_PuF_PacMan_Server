@@ -1,4 +1,4 @@
-package com.pacman.game.server;
+package com.pacman.game;
 
 public class AuthRequest {
     private String username;

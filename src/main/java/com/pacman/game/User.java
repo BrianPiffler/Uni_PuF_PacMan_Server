@@ -1,4 +1,4 @@
-package com.pacman.game.server;
+package com.pacman.game;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
