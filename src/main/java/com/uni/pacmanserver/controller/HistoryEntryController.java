@@ -34,14 +34,28 @@ public class HistoryEntryController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Set<HistoryEntry>> getAllHistoryEntries(@PathVariable int id) {
-        Optional<User> userById = userRepository.findById(id);
-
-        if (userById.isPresent()) {
-            Set<HistoryEntry> allHistoryEntriesInDb = historyEntryRepository.findAllByUserId(userById.get().getId());
-            return new ResponseEntity<Set<HistoryEntry>>(allHistoryEntriesInDb, HttpStatus.OK);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return new ResponseEntity("User is not authenticated", HttpStatus.UNAUTHORIZED);
         }
 
-        return new ResponseEntity("No History-Entries found by id " + id, HttpStatus.NOT_FOUND);
+        // Extrahieren des Principal-Objekts
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof UserDetails) {
+            String uName = ((UserDetails) principal).getUsername();
+
+            User idUser = userRepository.findUserByUsername(uName)
+            .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+
+            if(id == idUser.getId()) {
+                Set<HistoryEntry> allHistoryEntriesInDb = historyEntryRepository.findAllByUserId(idUser.getId());
+                return new ResponseEntity<Set<HistoryEntry>>(allHistoryEntriesInDb, HttpStatus.OK);
+            } else {
+                return new ResponseEntity("Wrong id for authenticated user", HttpStatus.FORBIDDEN);
+            }
+        }else {
+            return new ResponseEntity("Invalid authentication principal", HttpStatus.FORBIDDEN);
+        }
 
     }
 
@@ -52,7 +66,7 @@ public class HistoryEntryController {
             return new ResponseEntity("User is not authenticated", HttpStatus.UNAUTHORIZED);
         }
 
-        // Extrahieren Sie das Principal-Objekt
+        // Extrahieren des Principal-Objekts
         Object principal = authentication.getPrincipal();
         if (principal instanceof UserDetails) {
             String uName = ((UserDetails) principal).getUsername();

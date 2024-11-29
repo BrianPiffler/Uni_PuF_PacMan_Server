@@ -1,0 +1,14 @@
+C:\Users\Daniel\Desktop\Korrekturen-daniel-dev\Uni_PuF_PacMan_Server\src\main\java\com\uni\pacmanserver\config\SecurityConfig.java
+C:\Users\Daniel\Desktop\Korrekturen-daniel-dev\Uni_PuF_PacMan_Server\src\main\java\com\uni\pacmanserver\controller\AuthController.java
+C:\Users\Daniel\Desktop\Korrekturen-daniel-dev\Uni_PuF_PacMan_Server\src\main\java\com\uni\pacmanserver\controller\HistoryEntryController.java
+C:\Users\Daniel\Desktop\Korrekturen-daniel-dev\Uni_PuF_PacMan_Server\src\main\java\com\uni\pacmanserver\controller\UserController.java
+C:\Users\Daniel\Desktop\Korrekturen-daniel-dev\Uni_PuF_PacMan_Server\src\main\java\com\uni\pacmanserver\entity\HistoryEntry.java
+C:\Users\Daniel\Desktop\Korrekturen-daniel-dev\Uni_PuF_PacMan_Server\src\main\java\com\uni\pacmanserver\entity\User.java
+C:\Users\Daniel\Desktop\Korrekturen-daniel-dev\Uni_PuF_PacMan_Server\src\main\java\com\uni\pacmanserver\PacmanserverApplication.java
+C:\Users\Daniel\Desktop\Korrekturen-daniel-dev\Uni_PuF_PacMan_Server\src\main\java\com\uni\pacmanserver\repository\HistoryEntryRepository.java
+C:\Users\Daniel\Desktop\Korrekturen-daniel-dev\Uni_PuF_PacMan_Server\src\main\java\com\uni\pacmanserver\repository\UserRepository.java
+C:\Users\Daniel\Desktop\Korrekturen-daniel-dev\Uni_PuF_PacMan_Server\src\main\java\com\uni\pacmanserver\request\AuthRequest.java
+C:\Users\Daniel\Desktop\Korrekturen-daniel-dev\Uni_PuF_PacMan_Server\src\main\java\com\uni\pacmanserver\security\CustomUserDetailsService.java
+C:\Users\Daniel\Desktop\Korrekturen-daniel-dev\Uni_PuF_PacMan_Server\src\main\java\com\uni\pacmanserver\security\JwtAuthenticationEntryPoint.java
+C:\Users\Daniel\Desktop\Korrekturen-daniel-dev\Uni_PuF_PacMan_Server\src\main\java\com\uni\pacmanserver\security\JwtAuthenticationFilter.java
+C:\Users\Daniel\Desktop\Korrekturen-daniel-dev\Uni_PuF_PacMan_Server\src\main\java\com\uni\pacmanserver\security\JwtTokenProvider.java
