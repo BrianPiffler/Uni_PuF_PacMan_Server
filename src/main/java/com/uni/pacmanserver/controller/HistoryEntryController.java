@@ -1,6 +1,5 @@
 package com.uni.pacmanserver.controller;
 
-import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,10 +32,12 @@ public class HistoryEntryController {
     private UserRepository userRepository;
 
     @GetMapping("/{id}")
-    public ResponseEntity<Set<HistoryEntry>> getAllHistoryEntries(@PathVariable int id) {
+    public ResponseEntity<?> getAllHistoryEntries(@PathVariable int id) {
+    //public ResponseEntity<Set<HistoryEntry>> getAllHistoryEntries(@PathVariable int id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
-            return new ResponseEntity("User is not authenticated", HttpStatus.UNAUTHORIZED);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated");
+            //return new ResponseEntity("User is not authenticated", HttpStatus.UNAUTHORIZED);
         }
 
         // Extrahieren des Principal-Objekts
@@ -49,12 +50,16 @@ public class HistoryEntryController {
 
             if(id == idUser.getId()) {
                 Set<HistoryEntry> allHistoryEntriesInDb = historyEntryRepository.findAllByUserId(idUser.getId());
-                return new ResponseEntity<Set<HistoryEntry>>(allHistoryEntriesInDb, HttpStatus.OK);
+                return ResponseEntity.ok(allHistoryEntriesInDb);
+                //return new ResponseEntity<Set<HistoryEntry>>(allHistoryEntriesInDb, HttpStatus.OK);
             } else {
-                return new ResponseEntity("Wrong id for authenticated user", HttpStatus.FORBIDDEN);
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body("Wrong ID for authenticated user");
+                //return new ResponseEntity("Wrong id for authenticated user", HttpStatus.FORBIDDEN);
             }
         }else {
-            return new ResponseEntity("Invalid authentication principal", HttpStatus.FORBIDDEN);
+            
+            //return new ResponseEntity("Invalid authentication principal", HttpStatus.FORBIDDEN);
         }
 
     }
@@ -63,7 +68,9 @@ public class HistoryEntryController {
     public ResponseEntity<HistoryEntry> createHistoryEntry(@RequestBody HistoryEntry newEntry) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
-            return new ResponseEntity("User is not authenticated", HttpStatus.UNAUTHORIZED);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                             .body(null);
+            //return new ResponseEntity("User is not authenticated", HttpStatus.UNAUTHORIZED);
         }
 
         // Extrahieren des Principal-Objekts
@@ -77,9 +84,11 @@ public class HistoryEntryController {
             newEntry.setUserId(idUser.getId());
 
             HistoryEntry savedEntry = historyEntryRepository.save(newEntry);
-            return new ResponseEntity<HistoryEntry>(savedEntry, HttpStatus.CREATED);
+            return ResponseEntity.status(HttpStatus.CREATED).body(savedEntry);
+            //return new ResponseEntity<HistoryEntry>(savedEntry, HttpStatus.CREATED);
         } else {
-            return new ResponseEntity("Invalid authentication principal", HttpStatus.FORBIDDEN);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+            //return new ResponseEntity("Invalid authentication principal", HttpStatus.FORBIDDEN);
         }
     }
 }

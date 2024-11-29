@@ -15,15 +15,26 @@ import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.security.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
+
+import javax.crypto.SecretKey;
 
 @Component
 public class JwtTokenProvider {
 
     @Value("${app.jwtSecret}")  // in application.properties gespeichert. Evtl. sicherer speichern!
     private String jwtSecret;
+
     private static final Logger log = LoggerFactory.getLogger(JwtTokenProvider.class);
+
+    // Erzeugt einen SecretKey basierend auf dem Base64-codierten jwtSecret
+    private SecretKey getSigningKey() {
+        byte[] keyBytes = Decoders.BASE64.decode(jwtSecret); // Base64-decodiertes Secret
+        return Keys.hmacShaKeyFor(keyBytes); // SecretKey mit HMAC erzeugen
+    }
 
     public String generateToken(String username) {
         Calendar cal = Calendar.getInstance();
@@ -35,7 +46,8 @@ public class JwtTokenProvider {
             .setSubject(username)
             .setIssuedAt(iat)
             .setExpiration(exp)
-            .signWith(SignatureAlgorithm.HS512, jwtSecret)
+            .signWith(getSigningKey(), SignatureAlgorithm.HS256)
+            //.signWith(SignatureAlgorithm.HS512, jwtSecret)
             .compact();
     }
 
@@ -45,9 +57,12 @@ public class JwtTokenProvider {
     }
 
     public String getUsernameFromToken(String token) {
-        Claims claims = Jwts
-            .parser()
-            .setSigningKey(jwtSecret)
+        Claims claims = Jwts.parserBuilder()
+        //Claims claims = Jwts
+            .setSigningKey(getSigningKey()) // Parser mit sicherem Key initialisieren
+            .build()
+            //.parser()
+            //.setSigningKey(jwtSecret)
             .parseClaimsJws(token)
             .getBody();
 
@@ -56,7 +71,11 @@ public class JwtTokenProvider {
 
     public boolean validateToken(String token) {
         try {
-            Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
+            Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token);
+            //Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
             return true;
         } catch (ExpiredJwtException e) {
             log.error("Expired JWT token");
