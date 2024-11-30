@@ -90,8 +90,7 @@ public class UserController {
             // Sicherstellen, dass der Benutzer nur seine eigenen Daten aktualisiert
             Optional<User> optionalUser = userRepository.findUserByUsername(uName);
             if (optionalUser.isEmpty() || optionalUser.get().getId() != id) {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                                     .body("You are not authorized to update this user");
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You are not authorized to update this user");
             }
     
             User existingUser = optionalUser.get();
@@ -105,15 +104,12 @@ public class UserController {
                 existingUser.setPassword(updatedUser.getPassword());
             }
     
-            // Sollten/ könnten hier auch die historyEntries stehen? 
-    
             // Benutzer in der Datenbank speichern
             User savedUser = userRepository.save(existingUser);
     
             return ResponseEntity.ok(savedUser);
         } else {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                                 .body("Invalid authentication principal");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid authentication principal");
         }
     }
 }
