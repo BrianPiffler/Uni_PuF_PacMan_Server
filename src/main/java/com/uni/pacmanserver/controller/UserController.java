@@ -34,12 +34,10 @@ public class UserController {
      */
     @GetMapping("/{username}")
     public ResponseEntity<?> getUser(@PathVariable String username) {
-    //public ResponseEntity<User> getUser(@PathVariable String username) {
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated");
-            //return new ResponseEntity("User is not authenticated", HttpStatus.UNAUTHORIZED);
         } else {
 
             // Extrahieren des Principal-Objekts
@@ -54,17 +52,14 @@ public class UserController {
                     } else {                
                         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                             .body("No User found by username: " + username);
-                        //return new ResponseEntity("No User found by username" + username, HttpStatus.NOT_FOUND);
                     }
                 } else {
                     return ResponseEntity.status(HttpStatus.FORBIDDEN)
                         .body("Wrong username for authenticated user");
-                    //return new ResponseEntity("Wrong username for authenticated user", HttpStatus.FORBIDDEN);
                 } 
             } else {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN)
                     .body("Invalid authentication principal");
-                //return new ResponseEntity("Invalid authentication principal", HttpStatus.FORBIDDEN);
             }
         }
     }

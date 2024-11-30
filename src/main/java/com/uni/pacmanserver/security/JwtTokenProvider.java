@@ -47,7 +47,6 @@ public class JwtTokenProvider {
             .setIssuedAt(iat)
             .setExpiration(exp)
             .signWith(getSigningKey(), SignatureAlgorithm.HS256)
-            //.signWith(SignatureAlgorithm.HS512, jwtSecret)
             .compact();
     }
 
@@ -58,11 +57,8 @@ public class JwtTokenProvider {
 
     public String getUsernameFromToken(String token) {
         Claims claims = Jwts.parserBuilder()
-        //Claims claims = Jwts
             .setSigningKey(getSigningKey()) // Parser mit sicherem Key initialisieren
             .build()
-            //.parser()
-            //.setSigningKey(jwtSecret)
             .parseClaimsJws(token)
             .getBody();
 
@@ -75,7 +71,6 @@ public class JwtTokenProvider {
                 .setSigningKey(getSigningKey())
                 .build()
                 .parseClaimsJws(token);
-            //Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token);
             return true;
         } catch (ExpiredJwtException e) {
             log.error("Expired JWT token");

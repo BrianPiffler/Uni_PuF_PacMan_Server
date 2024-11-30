@@ -33,11 +33,9 @@ public class HistoryEntryController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getAllHistoryEntries(@PathVariable int id) {
-    //public ResponseEntity<Set<HistoryEntry>> getAllHistoryEntries(@PathVariable int id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated");
-            //return new ResponseEntity("User is not authenticated", HttpStatus.UNAUTHORIZED);
         }
 
         // Extrahieren des Principal-Objekts
@@ -51,14 +49,11 @@ public class HistoryEntryController {
             if(id == idUser.getId()) {
                 Set<HistoryEntry> allHistoryEntriesInDb = historyEntryRepository.findAllByUserId(idUser.getId());
                 return ResponseEntity.ok(allHistoryEntriesInDb);
-                //return new ResponseEntity<Set<HistoryEntry>>(allHistoryEntriesInDb, HttpStatus.OK);
             } else {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Wrong ID for authenticated user");
-                //return new ResponseEntity("Wrong id for authenticated user", HttpStatus.FORBIDDEN);
             }
         }else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid authentication principal");
-            //return new ResponseEntity("Invalid authentication principal", HttpStatus.FORBIDDEN);
         }
 
     }
@@ -68,7 +63,6 @@ public class HistoryEntryController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated");
-            //return new ResponseEntity("User is not authenticated", HttpStatus.UNAUTHORIZED);
         }
 
         // Extrahieren des Principal-Objekts
@@ -83,10 +77,8 @@ public class HistoryEntryController {
 
             HistoryEntry savedEntry = historyEntryRepository.save(newEntry);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedEntry);
-            //return new ResponseEntity<HistoryEntry>(savedEntry, HttpStatus.CREATED);
         } else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid authentication principal");
-            //return new ResponseEntity("Invalid authentication principal", HttpStatus.FORBIDDEN);
         }
     }
 }
