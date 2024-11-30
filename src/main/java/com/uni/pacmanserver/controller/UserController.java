@@ -9,7 +9,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,6 +25,13 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
+    /**
+     * Endpunkt, um einen Userdaten anhand seines usernames abzurufen.
+     * GET /api/user/<username>
+     * 
+     * @param username 
+     * @return Userdaten oder Fehlermeldung
+     */
     @GetMapping("/{username}")
     public ResponseEntity<?> getUser(@PathVariable String username) {
     //public ResponseEntity<User> getUser(@PathVariable String username) {
@@ -60,5 +69,51 @@ public class UserController {
         }
     }
 
-    // TODO PatchMapping
+    /**
+     * Endpunkt zur Aktualisierung eines Users. 
+     * PATCH /api/user/<id>
+     * @param id   Die ID des Benutzers, der aktualisiert werden soll.
+     * @param updatedUser Die neuen Benutzerdaten.
+     * @return Aktualisierte Benutzerdaten oder Fehlermeldung.
+     */
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> updateUser(@PathVariable int id, @RequestBody User updatedUser) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated");
+        }
+    
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof UserDetails) {
+            String uName = ((UserDetails) principal).getUsername();
+    
+            // Sicherstellen, dass der Benutzer nur seine eigenen Daten aktualisiert
+            Optional<User> optionalUser = userRepository.findUserByUsername(uName);
+            if (optionalUser.isEmpty() || optionalUser.get().getId() != id) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                                     .body("You are not authorized to update this user");
+            }
+    
+            User existingUser = optionalUser.get();
+    
+            // Nur die Felder aktualisieren, die übergeben wurden
+            if (updatedUser.getUsername() != null && !updatedUser.getUsername().isEmpty()) {
+                existingUser.setUsername(updatedUser.getUsername());
+            }
+    
+            if (updatedUser.getPassword() != null && !updatedUser.getPassword().isEmpty()) {
+                existingUser.setPassword(updatedUser.getPassword());
+            }
+    
+            // Sollten/ könnten hier auch die historyEntries stehen? 
+    
+            // Benutzer in der Datenbank speichern
+            User savedUser = userRepository.save(existingUser);
+    
+            return ResponseEntity.ok(savedUser);
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                                 .body("Invalid authentication principal");
+        }
+    }
 }

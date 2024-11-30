@@ -53,23 +53,21 @@ public class HistoryEntryController {
                 return ResponseEntity.ok(allHistoryEntriesInDb);
                 //return new ResponseEntity<Set<HistoryEntry>>(allHistoryEntriesInDb, HttpStatus.OK);
             } else {
-                return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                        .body("Wrong ID for authenticated user");
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Wrong ID for authenticated user");
                 //return new ResponseEntity("Wrong id for authenticated user", HttpStatus.FORBIDDEN);
             }
         }else {
-            
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid authentication principal");
             //return new ResponseEntity("Invalid authentication principal", HttpStatus.FORBIDDEN);
         }
 
     }
 
     @PostMapping("")
-    public ResponseEntity<HistoryEntry> createHistoryEntry(@RequestBody HistoryEntry newEntry) {
+    public ResponseEntity<?> createHistoryEntry(@RequestBody HistoryEntry newEntry) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                             .body(null);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("User is not authenticated");
             //return new ResponseEntity("User is not authenticated", HttpStatus.UNAUTHORIZED);
         }
 
@@ -87,7 +85,7 @@ public class HistoryEntryController {
             return ResponseEntity.status(HttpStatus.CREATED).body(savedEntry);
             //return new ResponseEntity<HistoryEntry>(savedEntry, HttpStatus.CREATED);
         } else {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid authentication principal");
             //return new ResponseEntity("Invalid authentication principal", HttpStatus.FORBIDDEN);
         }
     }
