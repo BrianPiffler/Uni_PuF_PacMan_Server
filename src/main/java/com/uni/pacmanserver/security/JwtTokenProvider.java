@@ -3,6 +3,7 @@ package com.uni.pacmanserver.security;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
@@ -24,6 +25,9 @@ import javax.crypto.SecretKey;
 
 @Component
 public class JwtTokenProvider {
+
+    @Autowired
+    private TokenBlacklist tokenBlacklist;
 
     @Value("${app.jwtSecret}")  // in application.properties gespeichert. Evtl. sicherer speichern!
     private String jwtSecret;
@@ -66,6 +70,12 @@ public class JwtTokenProvider {
     }
 
     public boolean validateToken(String token) {
+        // Blacklist-Prüfung
+        if (tokenBlacklist.contains(token)) {
+            log.error("Blacklisted Token");
+            return false;
+        }
+
         try {
             Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
