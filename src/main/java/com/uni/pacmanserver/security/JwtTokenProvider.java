@@ -70,12 +70,7 @@ public class JwtTokenProvider {
     }
 
     public boolean validateToken(String token) {
-        // Blacklist-Prüfung
-        if (tokenBlacklist.contains(token)) {
-            log.error("Blacklisted Token");
-            return false;
-        }
-
+        
         try {
             Jwts.parserBuilder()
                 .setSigningKey(getSigningKey())
@@ -94,5 +89,14 @@ public class JwtTokenProvider {
             log.error("JWT claims string is empty.");
         }
         return false;
+    }
+    
+    public boolean isBlacklisted (String token) {// Blacklist-Prüfung
+        if (tokenBlacklist.contains(token)) {
+            log.error("Blacklisted Token");
+            return true;
+        } else {
+            return false;
+        }
     }
 }
