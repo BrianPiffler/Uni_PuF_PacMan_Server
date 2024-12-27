@@ -13,7 +13,7 @@ public class HistoryEntry {
     private int id;
     
     private long gameScore;
-    private int difficultyPlayed;
+    private String difficultyPlayed;
     private long datePlayed;
     private long timePlayed;
 
@@ -28,7 +28,7 @@ public class HistoryEntry {
         return gameScore;
     }
 
-    public int getDifficultyPlayed() {
+    public String getDifficultyPlayed() {
         return difficultyPlayed;
     }
 
@@ -54,7 +54,7 @@ public class HistoryEntry {
         this.gameScore = gameScore;
     }
 
-    public void setDifficultyPlayed(int difficultyPlayed) {
+    public void setDifficultyPlayed(String difficultyPlayed) {
         this.difficultyPlayed = difficultyPlayed;
     }
 
