@@ -12,7 +12,7 @@ public class HistoryEntry {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     
-    private int gameScore;
+    private long gameScore;
     private int difficultyPlayed;
     private long datePlayed;
     private long timePlayed;
@@ -24,16 +24,8 @@ public class HistoryEntry {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getGameScore() {
+    public long getGameScore() {
         return gameScore;
-    }
-
-    public void setGameScore(int gameScore) {
-        this.gameScore = gameScore;
     }
 
     public int getDifficultyPlayed() {
@@ -53,6 +45,15 @@ public class HistoryEntry {
     }
 
     // SETTER
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setGameScore(long gameScore) {
+        this.gameScore = gameScore;
+    }
+
     public void setDifficultyPlayed(int difficultyPlayed) {
         this.difficultyPlayed = difficultyPlayed;
     }
