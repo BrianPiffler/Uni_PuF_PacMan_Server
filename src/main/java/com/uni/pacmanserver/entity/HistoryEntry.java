@@ -14,8 +14,8 @@ public class HistoryEntry {
     
     private int gameScore;
     private int difficultyPlayed;
-    private int datePlayed;
-    private int timePlayed;
+    private long datePlayed;
+    private long timePlayed;
 
     private int userId;
 
@@ -44,25 +44,24 @@ public class HistoryEntry {
         return userId;
     }
 
+    public long getTimePlayed() {
+        return timePlayed;
+    }
+
+    public long getDatePlayed() {
+        return datePlayed;
+    }
 
     // SETTER
     public void setDifficultyPlayed(int difficultyPlayed) {
         this.difficultyPlayed = difficultyPlayed;
     }
 
-    public int getDatePlayed() {
-        return datePlayed;
-    }
-
-    public void setDatePlayed(int datePlayed) {
+    public void setDatePlayed(long datePlayed) {
         this.datePlayed = datePlayed;
     }
 
-    public int getTimePlayed() {
-        return timePlayed;
-    }
-
-    public void setTimePlayed(int timePlayed) {
+    public void setTimePlayed(long timePlayed) {
         this.timePlayed = timePlayed;
     }
 
