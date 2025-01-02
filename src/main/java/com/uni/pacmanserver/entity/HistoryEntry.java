@@ -12,10 +12,10 @@ public class HistoryEntry {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
     
-    private int gameScore;
-    private int difficultyPlayed;
-    private int datePlayed;
-    private int timePlayed;
+    private long gameScore;
+    private String difficultyPlayed;
+    private long datePlayed;
+    private long timePlayed;
 
     private int userId;
 
@@ -24,19 +24,11 @@ public class HistoryEntry {
         return id;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getGameScore() {
+    public long getGameScore() {
         return gameScore;
     }
 
-    public void setGameScore(int gameScore) {
-        this.gameScore = gameScore;
-    }
-
-    public int getDifficultyPlayed() {
+    public String getDifficultyPlayed() {
         return difficultyPlayed;
     }
 
@@ -44,25 +36,33 @@ public class HistoryEntry {
         return userId;
     }
 
-
-    // SETTER
-    public void setDifficultyPlayed(int difficultyPlayed) {
-        this.difficultyPlayed = difficultyPlayed;
-    }
-
-    public int getDatePlayed() {
-        return datePlayed;
-    }
-
-    public void setDatePlayed(int datePlayed) {
-        this.datePlayed = datePlayed;
-    }
-
-    public int getTimePlayed() {
+    public long getTimePlayed() {
         return timePlayed;
     }
 
-    public void setTimePlayed(int timePlayed) {
+    public long getDatePlayed() {
+        return datePlayed;
+    }
+
+    // SETTER
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setGameScore(long gameScore) {
+        this.gameScore = gameScore;
+    }
+
+    public void setDifficultyPlayed(String difficultyPlayed) {
+        this.difficultyPlayed = difficultyPlayed;
+    }
+
+    public void setDatePlayed(long datePlayed) {
+        this.datePlayed = datePlayed;
+    }
+
+    public void setTimePlayed(long timePlayed) {
         this.timePlayed = timePlayed;
     }
 

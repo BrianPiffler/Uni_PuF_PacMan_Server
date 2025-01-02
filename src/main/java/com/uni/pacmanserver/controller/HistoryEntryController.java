@@ -1,6 +1,7 @@
 package com.uni.pacmanserver.controller;
 
 import java.util.Set;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -44,18 +45,36 @@ public class HistoryEntryController {
             String uName = ((UserDetails) principal).getUsername();
 
             User idUser = userRepository.findUserByUsername(uName)
-            .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                    .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
-            if(id == idUser.getId()) {
+            if (id == idUser.getId()) {
                 Set<HistoryEntry> allHistoryEntriesInDb = historyEntryRepository.findAllByUserId(idUser.getId());
                 return ResponseEntity.ok(allHistoryEntriesInDb);
             } else {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Wrong ID for authenticated user");
             }
-        }else {
+        } else {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Invalid authentication principal");
         }
 
+    }
+
+    @GetMapping("/best")
+    public ResponseEntity<?> getBestEntry() {
+        List<HistoryEntry> allEntries = historyEntryRepository.findAll();
+
+        HistoryEntry bestEntry = null;
+        for (HistoryEntry entry : allEntries) {
+            if (bestEntry == null || entry.getGameScore() > bestEntry.getGameScore()) {
+                bestEntry = entry;
+            }
+        }
+
+        if (bestEntry != null) {
+            return ResponseEntity.ok(bestEntry);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No entries found");
+        }
     }
 
     @PostMapping("")
@@ -71,7 +90,7 @@ public class HistoryEntryController {
             String uName = ((UserDetails) principal).getUsername();
 
             User idUser = userRepository.findUserByUsername(uName)
-            .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                    .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
             newEntry.setUserId(idUser.getId());
 
